@@ -1,0 +1,749 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cookie Demo App</title>
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #6610f2;
+        }
+
+        h2 {
+            margin: 20px 0 10px;
+            color: #6610f2;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 5px;
+        }
+
+        .info-box {
+            background-color: #e8e4fd;
+            border-left: 4px solid #6610f2;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 0 4px 4px 0;
+        }
+
+        .comparison {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .storage-type {
+            flex: 1;
+            min-width: 250px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+        }
+
+        .storage-type h3 {
+            color: #6610f2;
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #6610f2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 15px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #520dc2;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .cookie-display,
+        .storage-display {
+            margin-top: 20px;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+        }
+
+        .storage-tabs {
+            display: flex;
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 15px;
+        }
+
+        .tab {
+            padding: 10px 15px;
+            cursor: pointer;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-bottom: none;
+            border-radius: 4px 4px 0 0;
+            margin-right: 5px;
+        }
+
+        .tab.active {
+            background-color: white;
+            border-bottom: 1px solid white;
+            margin-bottom: -1px;
+            font-weight: bold;
+            color: #6610f2;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        table, th, td {
+            border: 1px solid #dee2e6;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .cookie-options {
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .feature-list {
+            list-style-position: inside;
+            margin: 10px 0;
+        }
+
+        .feature-list li {
+            margin-bottom: 5px;
+        }
+
+        .warning {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        .no-items {
+            color: #6c757d;
+            font-style: italic;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .delete-btn {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            margin-left: 10px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .delete-btn:hover {
+            background-color: #c82333;
+        }
+
+        .expiry-info {
+            font-size: 12px;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cookie Demo App</h1>
+        
+        <div class="info-box">
+            <p>This demo illustrates how cookies work and how they differ from localStorage and sessionStorage. 
+               Try setting cookies with different expiration times and view them alongside other storage methods.</p>
+        </div>
+        
+        <div class="comparison">
+            <div class="storage-type">
+                <h3>Cookies</h3>
+                <ul class="feature-list">
+                    <li>Sent with every HTTP request</li>
+                    <li>Max size: ~4KB total</li>
+                    <li>Expiration: Can be set</li>
+                    <li>Accessible from server-side</li>
+                    <li>Can be secured and HTTP-only</li>
+                </ul>
+            </div>
+            <div class="storage-type">
+                <h3>localStorage</h3>
+                <ul class="feature-list">
+                    <li>Never sent to server</li>
+                    <li>Max size: ~5-10MB</li>
+                    <li>Expiration: Never (persistent)</li>
+                    <li>Client-side only</li>
+                    <li>Available across browser tabs</li>
+                </ul>
+            </div>
+            <div class="storage-type">
+                <h3>sessionStorage</h3>
+                <ul class="feature-list">
+                    <li>Never sent to server</li>
+                    <li>Max size: ~5-10MB</li>
+                    <li>Expiration: Tab close</li>
+                    <li>Client-side only</li>
+                    <li>Limited to current tab</li>
+                </ul>
+            </div>
+        </div>
+
+        <h2>Create a Cookie</h2>
+        <div class="form-group">
+            <label for="cookie-name">Cookie Name:</label>
+            <input type="text" id="cookie-name" placeholder="Enter cookie name">
+        </div>
+        
+        <div class="form-group">
+            <label for="cookie-value">Cookie Value:</label>
+            <input type="text" id="cookie-value" placeholder="Enter cookie value">
+        </div>
+        
+        <div class="cookie-options">
+            <div class="form-group">
+                <label for="cookie-expiry">Expires in:</label>
+                <div style="display: flex; gap: 10px;">
+                    <input type="number" id="cookie-expiry" min="1" value="1" style="width: 80px;">
+                    <select id="expiry-unit">
+                        <option value="minutes">Minutes</option>
+                        <option value="hours">Hours</option>
+                        <option value="days">Days</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label>Options:</label>
+                <div>
+                    <input type="checkbox" id="secure-cookie" name="secure-cookie">
+                    <label for="secure-cookie" style="display: inline;">Secure (HTTPS only)</label>
+                </div>
+                <div>
+                    <input type="checkbox" id="same-site" name="same-site">
+                    <label for="same-site" style="display: inline;">SameSite=Strict</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="button-group">
+            <button id="set-cookie-btn">Set Cookie</button>
+            <button id="clear-cookies-btn">Clear All Cookies</button>
+        </div>
+        
+        <h2>Storage Tabs</h2>
+        <div class="storage-tabs">
+            <div class="tab active" data-tab="cookies">Cookies</div>
+            <div class="tab" data-tab="local">localStorage</div>
+            <div class="tab" data-tab="session">sessionStorage</div>
+        </div>
+        
+        <div class="tab-content active" id="cookies-tab">
+            <div class="form-group">
+                <button id="refresh-cookies">Refresh Cookies</button>
+                <p class="expiry-info">Note: You can see when each cookie will expire</p>
+            </div>
+            <table id="cookies-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Value</th>
+                        <th>Expires</th>
+                        <th>Options</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="cookies-list">
+                    <!-- Cookies will be displayed here -->
+                </tbody>
+            </table>
+            <div id="no-cookies" class="no-items">No cookies found. Try setting one!</div>
+        </div>
+        
+        <div class="tab-content" id="local-tab">
+            <div class="form-group">
+                <label for="local-name">Key:</label>
+                <input type="text" id="local-name" placeholder="Enter key name">
+            </div>
+            <div class="form-group">
+                <label for="local-value">Value:</label>
+                <input type="text" id="local-value" placeholder="Enter value">
+            </div>
+            <button id="set-local-btn">Save to localStorage</button>
+            <button id="clear-local-btn">Clear localStorage</button>
+            
+            <table style="margin-top: 15px;">
+                <thead>
+                    <tr>
+                        <th>Key</th>
+                        <th>Value</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="local-list">
+                    <!-- localStorage items will be displayed here -->
+                </tbody>
+            </table>
+            <div id="no-local" class="no-items">No localStorage items found.</div>
+        </div>
+        
+        <div class="tab-content" id="session-tab">
+            <div class="form-group">
+                <label for="session-name">Key:</label>
+                <input type="text" id="session-name" placeholder="Enter key name">
+            </div>
+            <div class="form-group">
+                <label for="session-value">Value:</label>
+                <input type="text" id="session-value" placeholder="Enter value">
+            </div>
+            <button id="set-session-btn">Save to sessionStorage</button>
+            <button id="clear-session-btn">Clear sessionStorage</button>
+            
+            <table style="margin-top: 15px;">
+                <thead>
+                    <tr>
+                        <th>Key</th>
+                        <th>Value</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="session-list">
+                    <!-- sessionStorage items will be displayed here -->
+                </tbody>
+            </table>
+            <div id="no-session" class="no-items">No sessionStorage items found.</div>
+        </div>
+        
+        <h2>Key Differences</h2>
+        <div class="info-box">
+            <p><strong>Server Communication:</strong> Cookies are automatically sent with every HTTP request to the same domain. localStorage and sessionStorage are never transmitted to the server.</p>
+            <p><strong>Expiration:</strong> Cookies can have explicit expiration dates. localStorage persists indefinitely. sessionStorage is cleared when you close the tab.</p>
+            <p><strong>Storage Capacity:</strong> Cookies are limited to about 4KB total. localStorage and sessionStorage can typically store 5-10MB.</p>
+            <p><strong>Accessibility:</strong> Cookies can be accessed both client-side and server-side. localStorage and sessionStorage are client-side only.</p>
+            <p><strong>Security Options:</strong> Cookies have security options like HttpOnly, Secure, and SameSite flags. localStorage and sessionStorage do not.</p>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements for cookie section
+        const cookieNameInput = document.getElementById('cookie-name');
+        const cookieValueInput = document.getElementById('cookie-value');
+        const cookieExpiryInput = document.getElementById('cookie-expiry');
+        const expiryUnitSelect = document.getElementById('expiry-unit');
+        const secureCookieCheckbox = document.getElementById('secure-cookie');
+        const sameSiteCheckbox = document.getElementById('same-site');
+        const setCookieBtn = document.getElementById('set-cookie-btn');
+        const clearCookiesBtn = document.getElementById('clear-cookies-btn');
+        const cookiesList = document.getElementById('cookies-list');
+        const noCookiesMessage = document.getElementById('no-cookies');
+        const refreshCookiesBtn = document.getElementById('refresh-cookies');
+        
+        // DOM elements for localStorage section
+        const localNameInput = document.getElementById('local-name');
+        const localValueInput = document.getElementById('local-value');
+        const setLocalBtn = document.getElementById('set-local-btn');
+        const clearLocalBtn = document.getElementById('clear-local-btn');
+        const localList = document.getElementById('local-list');
+        const noLocalMessage = document.getElementById('no-local');
+        
+        // DOM elements for sessionStorage section
+        const sessionNameInput = document.getElementById('session-name');
+        const sessionValueInput = document.getElementById('session-value');
+        const setSessionBtn = document.getElementById('set-session-btn');
+        const clearSessionBtn = document.getElementById('clear-session-btn');
+        const sessionList = document.getElementById('session-list');
+        const noSessionMessage = document.getElementById('no-session');
+        
+        // Tab handling
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        // Set a cookie with specified options
+        function setCookie(name, value, expiryDays, secure, sameSite) {
+            let expires = '';
+            
+            if (expiryDays) {
+                const date = new Date();
+                date.setTime(date.getTime() + (expiryDays * 24 * 60 * 60 * 1000));
+                expires = '; expires=' + date.toUTCString();
+            }
+            
+            let cookieString = name + '=' + encodeURIComponent(value) + expires + '; path=/';
+            
+            if (secure) {
+                cookieString += '; Secure';
+            }
+            
+            if (sameSite) {
+                cookieString += '; SameSite=Strict';
+            }
+            
+            document.cookie = cookieString;
+            displayCookies();
+        }
+        
+        // Calculate expiry time based on input and unit
+        function calculateExpiryDays() {
+            const value = parseInt(cookieExpiryInput.value) || 1;
+            const unit = expiryUnitSelect.value;
+            
+            switch (unit) {
+                case 'minutes':
+                    return value / (24 * 60);
+                case 'hours':
+                    return value / 24;
+                case 'days':
+                    return value;
+                default:
+                    return 1;
+            }
+        }
+        
+        // Get all cookies and parse them into an array of objects
+        function getCookies() {
+            const cookies = [];
+            const cookieString = document.cookie;
+            
+            if (cookieString === '') {
+                return cookies;
+            }
+            
+            const cookieParts = cookieString.split(';');
+            
+            for (let i = 0; i < cookieParts.length; i++) {
+                const cookiePart = cookieParts[i].trim();
+                const equalsPos = cookiePart.indexOf('=');
+                
+                if (equalsPos > 0) {
+                    const name = cookiePart.substring(0, equalsPos);
+                    const value = decodeURIComponent(cookiePart.substring(equalsPos + 1));
+                    cookies.push({ name, value });
+                }
+            }
+            
+            return cookies;
+        }
+        
+        // Delete a specific cookie
+        function deleteCookie(name) {
+            document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            displayCookies();
+        }
+        
+        // Clear all cookies
+        function clearAllCookies() {
+            const cookies = getCookies();
+            cookies.forEach(cookie => {
+                deleteCookie(cookie.name);
+            });
+            displayCookies();
+        }
+        
+        // Display all cookies in the table
+        function displayCookies() {
+            const cookies = getCookies();
+            cookiesList.innerHTML = '';
+            
+            if (cookies.length === 0) {
+                noCookiesMessage.style.display = 'block';
+                return;
+            }
+            
+            noCookiesMessage.style.display = 'none';
+            
+            cookies.forEach(cookie => {
+                const row = document.createElement('tr');
+                
+                // Name
+                const nameCell = document.createElement('td');
+                nameCell.textContent = cookie.name;
+                
+                // Value
+                const valueCell = document.createElement('td');
+                valueCell.textContent = cookie.value;
+                
+                // Expires
+                const expiresCell = document.createElement('td');
+                expiresCell.textContent = 'Unknown';
+                expiresCell.classList.add('expiry-info');
+                
+                // Options
+                const optionsCell = document.createElement('td');
+                optionsCell.textContent = '-';
+                
+                // Actions
+                const actionsCell = document.createElement('td');
+                const deleteButton = document.createElement('button');
+                deleteButton.classList.add('delete-btn');
+                deleteButton.textContent = 'Delete';
+                deleteButton.addEventListener('click', function() {
+                    deleteCookie(cookie.name);
+                });
+                
+                actionsCell.appendChild(deleteButton);
+                
+                row.appendChild(nameCell);
+                row.appendChild(valueCell);
+                row.appendChild(expiresCell);
+                row.appendChild(optionsCell);
+                row.appendChild(actionsCell);
+                
+                cookiesList.appendChild(row);
+            });
+        }
+        
+        // Save to localStorage
+        function saveToLocalStorage() {
+            const key = localNameInput.value.trim();
+            const value = localValueInput.value.trim();
+            
+            if (key && value) {
+                try {
+                    localStorage.setItem(key, value);
+                    localNameInput.value = '';
+                    localValueInput.value = '';
+                    displayLocalStorage();
+                } catch (e) {
+                    alert('Error saving to localStorage: ' + e.message);
+                }
+            }
+        }
+        
+        // Display localStorage items
+        function displayLocalStorage() {
+            localList.innerHTML = '';
+            
+            if (localStorage.length === 0) {
+                noLocalMessage.style.display = 'block';
+                return;
+            }
+            
+            noLocalMessage.style.display = 'none';
+            
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                const value = localStorage.getItem(key);
+                
+                const row = document.createElement('tr');
+                
+                const keyCell = document.createElement('td');
+                keyCell.textContent = key;
+                
+                const valueCell = document.createElement('td');
+                valueCell.textContent = value;
+                
+                const actionsCell = document.createElement('td');
+                const deleteButton = document.createElement('button');
+                deleteButton.classList.add('delete-btn');
+                deleteButton.textContent = 'Delete';
+                deleteButton.addEventListener('click', function() {
+                    localStorage.removeItem(key);
+                    displayLocalStorage();
+                });
+                
+                actionsCell.appendChild(deleteButton);
+                
+                row.appendChild(keyCell);
+                row.appendChild(valueCell);
+                row.appendChild(actionsCell);
+                
+                localList.appendChild(row);
+            }
+        }
+        
+        // Save to sessionStorage
+        function saveToSessionStorage() {
+            const key = sessionNameInput.value.trim();
+            const value = sessionValueInput.value.trim();
+            
+            if (key && value) {
+                try {
+                    sessionStorage.setItem(key, value);
+                    sessionNameInput.value = '';
+                    sessionValueInput.value = '';
+                    displaySessionStorage();
+                } catch (e) {
+                    alert('Error saving to sessionStorage: ' + e.message);
+                }
+            }
+        }
+        
+        // Display sessionStorage items
+        function displaySessionStorage() {
+            sessionList.innerHTML = '';
+            
+            if (sessionStorage.length === 0) {
+                noSessionMessage.style.display = 'block';
+                return;
+            }
+            
+            noSessionMessage.style.display = 'none';
+            
+            for (let i = 0; i < sessionStorage.length; i++) {
+                const key = sessionStorage.key(i);
+                const value = sessionStorage.getItem(key);
+                
+                const row = document.createElement('tr');
+                
+                const keyCell = document.createElement('td');
+                keyCell.textContent = key;
+                
+                const valueCell = document.createElement('td');
+                valueCell.textContent = value;
+                
+                const actionsCell = document.createElement('td');
+                const deleteButton = document.createElement('button');
+                deleteButton.classList.add('delete-btn');
+                deleteButton.textContent = 'Delete';
+                deleteButton.addEventListener('click', function() {
+                    sessionStorage.removeItem(key);
+                    displaySessionStorage();
+                });
+                
+                actionsCell.appendChild(deleteButton);
+                
+                row.appendChild(keyCell);
+                row.appendChild(valueCell);
+                row.appendChild(actionsCell);
+                
+                sessionList.appendChild(row);
+            }
+        }
+        
+        // Tab switching functionality
+        function switchTab(event) {
+            const tabName = event.target.getAttribute('data-tab');
+            
+            // Update active tab
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update active content
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(tabName + '-tab').classList.add('active');
+        }
+        
+        // Event listeners
+        setCookieBtn.addEventListener('click', function() {
+            const name = cookieNameInput.value.trim();
+            const value = cookieValueInput.value.trim();
+            
+            if (name && value) {
+                const expiryDays = calculateExpiryDays();
+                const secure = secureCookieCheckbox.checked;
+                const sameSite = sameSiteCheckbox.checked;
+                
+                setCookie(name, value, expiryDays, secure, sameSite);
+                
+                // Clear inputs
+                cookieNameInput.value = '';
+                cookieValueInput.value = '';
+            }
+        });
+        
+        clearCookiesBtn.addEventListener('click', clearAllCookies);
+        refreshCookiesBtn.addEventListener('click', displayCookies);
+        
+        setLocalBtn.addEventListener('click', saveToLocalStorage);
+        clearLocalBtn.addEventListener('click', function() {
+            localStorage.clear();
+            displayLocalStorage();
+        });
+        
+        setSessionBtn.addEventListener('click', saveToSessionStorage);
+        clearSessionBtn.addEventListener('click', function() {
+            sessionStorage.clear();
+            displaySessionStorage();
+        });
+        
+        // Tab event listeners
+        tabs.forEach(tab => {
+            tab.addEventListener('click', switchTab);
+        });
+        
+        // Initialize displays
+        displayCookies();
+        displayLocalStorage();
+        displaySessionStorage();
+    </script>
+</body>
+</html>
